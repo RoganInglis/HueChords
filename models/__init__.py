@@ -1,4 +1,5 @@
 from models.base_model import BaseModel
+from models.midi_changer import MidiHueController
 
 __all__ = [
     "BaseModel",

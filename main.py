@@ -3,6 +3,7 @@ import json
 import time
 import tensorflow as tf
 import numpy as np
+import models
 
 # See the __init__ script in the models folder
 # `make_model` is a helper function to load any models you have
@@ -39,14 +40,15 @@ flags.DEFINE_integer('max_iter', 1000000, 'Max number of training iterations')
 flags.DEFINE_integer('max_train_epochs', 1000, 'Max number of training episodes')
 flags.DEFINE_boolean('test', False, 'Load a model and compute test performance')
 flags.DEFINE_integer('test_every', 10, 'Episode interval at which to test the agent during training')
+flags.DEFINE_boolean('midihue', False, 'Run the midi light changer script')
 
 # This is very important for TensorBoard
 # each model will end up in its own unique folder using time module
 # Obviously one can also choose to name the output folder
-flags.DEFINE_string('result_dir', project_dir + '/results/' + flags.FLAGS.model_name + '/' +
+flags.DEFINE_string('result_dir', project_dir + '/results/' + flags.FLAGS.agent_name + '/' +
                     str(int(time.time())),
                     'Name of the directory to store/log the model (if it exists, the model will be loaded from it)')
-flags.DEFINE_string('test_result_dir', project_dir + '/results/' + flags.FLAGS.model_name + '/' +
+flags.DEFINE_string('test_result_dir', project_dir + '/results/' + flags.FLAGS.agent_name + '/' +
                     str(int(time.time())) + '/test',
                     'Name of the directory to store/log the model test results (for TensorBoard)')
 
@@ -62,6 +64,15 @@ def main(_):
 
     if config['fullsearch']:
         print('Hyperparameter search not implemented yet')
+    elif config['midihue']:
+        # Create midi hue controller class
+        midiHueController = models.MidiHueController()
+
+        # Load track
+        midiHueController.load_track()
+
+        # Play
+        midiHueController.play_no_scheduler()
     else:
         model = make_model(config)
 
